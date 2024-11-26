@@ -56,6 +56,7 @@ declare -a CSSfiles=(
 	"assets/fonts/fonts.css"
 	"gs-ui-components/gsui.css"
 	"gs-ui-components/gsuiIcon/gsuiIcon.css"
+	"gs-ui-components/gsuiRipple/gsuiRipple.css"
 	"gs-ui-components/gsuiComButton/gsuiComButton.css"
 	"style.css"
 )
@@ -69,6 +70,7 @@ declare -a JSfiles=(
 	"gs-utils/gs-utils-dom.js"
 	"gs-utils/gs-utils-files.js"
 	"gs-ui-components/gsui0ne/gsui0ne.js"
+	"gs-ui-components/gsuiRipple/gsuiRipple.js"
 	"gs-ui-components/gsuiComButton/gsuiComButton.js"
 	"run.js"
 )

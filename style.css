@@ -1,8 +1,169 @@
 html,
 body {
 	height: 100%;
+	user-select: auto;
 }
 body {
+	color-scheme: dark;
 	margin: 0;
-	background-color: #111;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-size: 16px;
+	font-family: "Montserrat", sans-serif;
+	background-color: #22222a;
+	background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='%23000' fill-opacity='0.1'%3E%3Cpolygon fill-rule='evenodd' points='8 4 12 6 8 8 6 12 4 8 0 6 4 4 6 0 8 4'/%3E%3C/g%3E%3C/svg%3E" );
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background-color: #222; }
+::-webkit-scrollbar-thumb { background-color: #777; }
+
+/* .......................................................................... */
+#main {
+	width: 500px;
+	max-width: 100%;
+	margin-top: auto;
+	border-radius: 10px;
+	background-color: #3232a2;
+	background-image: linear-gradient( 45deg, #0006, transparent );
+}
+#head {
+	padding: 16px;
+	background-color: #0002;
+}
+#body {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 16px;
+}
+
+/* .......................................................................... */
+#title span:first-child {
+	font-weight: bold;
+	font-size: 24px;
+}
+#title span:last-child {
+	margin-left: 10px;
+	font-weight: bold;
+	font-size: 10px;
+	color: #999;
+}
+
+/* .......................................................................... */
+#inputfile {
+	display: none;
+}
+#droparea {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100px;
+	border: 4px dashed;
+	border-radius: 10px;
+	font: inherit;
+	cursor: pointer;
+	background: none;
+	opacity: .5;
+}
+#droparea:hover {
+	opacity: .7;
+}
+#main.loaded #droparea,
+#main:not( .loaded ) #file,
+#main:not( .loaded ) #convert {
+	display: none;
+}
+
+/* .......................................................................... */
+#file {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+#fileCancel {
+	position: absolute;
+	right: 0;
+	border: 0;
+	cursor: pointer;
+	background: none;
+}
+.fileLine {
+	display: flex;
+	align-items: baseline;
+}
+.fileLine:first-child {
+	padding-right: 32px;
+}
+.fileLine span:first-child {
+	min-width: 50px;
+	font-size: 13px;
+	opacity: .6;
+}
+.fileLine span:last-child {
+	font-weight: bold;
+}
+
+/* .......................................................................... */
+#convert {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: inherit;
+}
+#convertBtns {
+	display: flex;
+	gap: 16px;
+}
+#main:not( .ready ) #downloadBtn {
+	display: none;
+}
+#progress {
+	overflow: hidden;
+	align-self: stretch;
+	height: 20px;
+	border-radius: 4px;
+	background-color: #0005;
+}
+#progressIn {
+	width: 0;
+	height: 100%;
+	background-color: #1f8fff;
+	background-image: linear-gradient( 0deg, #0004, transparent );
+}
+
+/* .......................................................................... */
+#foot {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin-top: auto;
+	gap: 12px;
+	max-width: 470px;
+	padding: 20px 6ch;
+	font-size: 12px;
+	text-align: center;
+	color: #fff6;
+}
+#foot a {
+	color: inherit;
+}
+#foot i {
+	white-space: nowrap;
+}
+#copyright {
+	font-weight: bold;
+	color: inherit;
+}
+
+@media ( max-width: 450px ) {
+	#head {
+		flex-direction: column;
+	}
 }
