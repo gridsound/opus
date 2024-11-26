@@ -64,10 +64,18 @@ let newBlob;
 let convertStarted = false;
 
 elBtnArea.onclick = () => elInputFile.click();
-elFileCancel.onclick = () => setFile();
 elInputFile.onchange = () => setFile( elInputFile.files[ 0 ] );
 elConvertBtn.onclick = () => convert();
 elDownloadBtn.onclick = () => download();
+elFileCancel.onclick = () => {
+	setFile();
+	progress( 0 );
+	convertStarted = false;
+	elMain.classList.remove( "loaded" );
+	elMain.classList.remove( "ready" );
+	GSUsetAttribute( elConvertBtn, "disabled", false );
+	GSUsetAttribute( elConvertBtn, "loading", false );
+};
 
 document.body.ondragover = GSUnoopFalse;
 document.body.ondragstart = GSUnoopFalse;
@@ -83,15 +91,11 @@ worker.onmessage = e => {
 		switch( e.data.reply ) {
 			case "progress":
 				if ( val[ 1 ] ) {
-					lg(val[ 0 ], val[ 1 ])
-					elProgress.style.width = `${ val[ 0 ] / val[ 1 ] * 100 }%`;
+					progress( val[ 0 ] / val[ 1 ] );
 				}
 				break;
 			case "done":
-				lg( "done" );
 				for ( const fileName in val ) {
-					lg( fileName );
-					lg( val[ fileName ].blob );
 					newBlob = val[ fileName ].blob;
 				}
 				GSUsetAttribute( elConvertBtn, "disabled", true );
@@ -113,7 +117,7 @@ function setFile( f ) {
 }
 
 function convert() {
-	if ( file ) {
+	if ( file && !convertStarted ) {
 		convertStarted = true;
 		GSUsetAttribute( elConvertBtn, "loading", true );
 
@@ -129,6 +133,10 @@ function convert() {
 		} );
 		rdr.readAsArrayBuffer( file );
 	}
+}
+
+function progress( p ) {
+	elProgress.style.width = `${ p * 100 }%`;
 }
 
 function download() {
