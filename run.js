@@ -21,7 +21,7 @@ document.body.append(
 				GSUcreateDiv( { class: "fileLine" }, GSUcreateSpan( null, "name: " ), GSUcreateSpan() ),
 				GSUcreateDiv( { class: "fileLine" }, GSUcreateSpan( null, "MIME: " ), GSUcreateSpan() ),
 				GSUcreateDiv( { class: "fileLine" }, GSUcreateSpan( null, "size: " ), GSUcreateSpan() ),
-				GSUcreateButton( { id: "fileCancel", class: "gsuiIcon", "data-icon": "close" } ),
+				GSUcreateButton( { id: "fileCancel", icon: "close" } ),
 			),
 			GSUcreateDiv( { id: "convert" },
 				GSUcreateDiv( { id: "convertBtns" },
@@ -47,16 +47,16 @@ document.body.append(
 	),
 );
 
-const elMain = document.querySelector( "#main" );
-const elBtnArea = document.querySelector( "#droparea" );
-const elInputFile = document.querySelector( "#inputfile" );
-const elFileName = document.querySelector( ".fileLine:nth-child(1) span:last-child" );
-const elFileType = document.querySelector( ".fileLine:nth-child(2) span:last-child" );
-const elFileSize = document.querySelector( ".fileLine:nth-child(3) span:last-child" );
-const elFileCancel = document.querySelector( "#fileCancel" );
-const elConvertBtn = document.querySelector( "#convertBtn" );
-const elDownloadBtn = document.querySelector( "#downloadBtn" );
-const elProgress = document.querySelector( "#progressIn" );
+const elMain = GSUdomQS( "#main" );
+const elBtnArea = GSUdomQS( "#droparea" );
+const elInputFile = GSUdomQS( "#inputfile" );
+const elFileName = GSUdomQS( ".fileLine:nth-child(1) span:last-child" );
+const elFileType = GSUdomQS( ".fileLine:nth-child(2) span:last-child" );
+const elFileSize = GSUdomQS( ".fileLine:nth-child(3) span:last-child" );
+const elFileCancel = GSUdomQS( "#fileCancel" );
+const elConvertBtn = GSUdomQS( "#convertBtn" );
+const elDownloadBtn = GSUdomQS( "#downloadBtn" );
+const elProgress = GSUdomQS( "#progressIn" );
 
 const worker = new Worker( "worker/EmsWorkerProxy.js" );
 let file;
@@ -71,10 +71,8 @@ elFileCancel.onclick = () => {
 	setFile();
 	progress( 0 );
 	convertStarted = false;
-	elMain.classList.remove( "loaded" );
-	elMain.classList.remove( "ready" );
-	GSUsetAttribute( elConvertBtn, "disabled", false );
-	GSUsetAttribute( elConvertBtn, "loading", false );
+	elMain.classList.remove( "loaded", "ready" );
+	GSUdomRmAttr( elConvertBtn, "disabled", "loading" );
 };
 
 document.body.ondragover = GSUnoopFalse;
@@ -98,8 +96,8 @@ worker.onmessage = e => {
 				for ( const fileName in val ) {
 					newBlob = val[ fileName ].blob;
 				}
-				GSUsetAttribute( elConvertBtn, "disabled", true );
-				GSUsetAttribute( elConvertBtn, "loading", false );
+				GSUdomSetAttr( elConvertBtn, "disabled", true );
+				GSUdomRmAttr( elConvertBtn, "loading" );
 				elMain.classList.add( "ready" );
 				break;
 		}
@@ -119,7 +117,7 @@ function setFile( f ) {
 function convert() {
 	if ( file && !convertStarted ) {
 		convertStarted = true;
-		GSUsetAttribute( elConvertBtn, "loading", true );
+		GSUdomSetAttr( elConvertBtn, "loading", true );
 
 		const rdr = new FileReader();
 
