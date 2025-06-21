@@ -96,7 +96,7 @@ worker.onmessage = e => {
 				for ( const fileName in val ) {
 					newBlob = val[ fileName ].blob;
 				}
-				GSUdomSetAttr( elConvertBtn, "disabled", true );
+				GSUdomSetAttr( elConvertBtn, "disabled" );
 				GSUdomRmAttr( elConvertBtn, "loading" );
 				elMain.classList.add( "ready" );
 				break;
@@ -117,7 +117,7 @@ function setFile( f ) {
 function convert() {
 	if ( file && !convertStarted ) {
 		convertStarted = true;
-		GSUdomSetAttr( elConvertBtn, "loading", true );
+		GSUdomSetAttr( elConvertBtn, "loading" );
 
 		const rdr = new FileReader();
 
