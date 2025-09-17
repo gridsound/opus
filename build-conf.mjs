@@ -1,7 +1,7 @@
 export default {
 	title:         "Opus by GridSound",
 	desc:          "Opus audio encoder",
-	favicon:       "assets/favicon.png",
+	favicon:       "assets/ico.svg",
 	url:           "https://opus.gridsound.com/",
 	ogImage:       "https://opus.gridsound.com/cover.png",
 	ogImageW:      1290,
@@ -32,6 +32,9 @@ export default {
 		"gs-utils/gs-utils-func.js",
 		"gs-utils/gs-utils-files.js",
 		"gs-utils/gs-utils-checkType.dev.js",
+
+		// .....................................................................
+		"gs-wa-components/gswaOpusConverter/gswaOpusConverter.js",
 
 		// .....................................................................
 		"gs-ui-components/gsui0ne/gsui0ne.js",

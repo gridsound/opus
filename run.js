@@ -58,11 +58,12 @@ const elConvertBtn = GSUdomQS( "#convertBtn" );
 const elDownloadBtn = GSUdomQS( "#downloadBtn" );
 const elProgress = GSUdomQS( "#progressIn" );
 
-const worker = new Worker( "worker/EmsWorkerProxy.js" );
 let file;
 let newBlob;
-let convertStarted = false;
+let newBlobName;
+const waOpus = new gswaOpusConverter( "worker/EmsWorkerProxy.js" );
 
+waOpus.$onprogress = p => progress( p );
 elBtnArea.onclick = () => elInputFile.click();
 elInputFile.onchange = () => setFile( elInputFile.files[ 0 ] );
 elConvertBtn.onclick = () => convert();
@@ -70,7 +71,6 @@ elDownloadBtn.onclick = () => download();
 elFileCancel.onclick = () => {
 	setFile();
 	progress( 0 );
-	convertStarted = false;
 	elMain.classList.remove( "loaded", "ready" );
 	GSUdomRmAttr( elConvertBtn, "disabled", "loading" );
 };
@@ -82,30 +82,8 @@ document.body.ondrop = e => {
 	return false;
 };
 
-worker.onmessage = e => {
-	if ( e.data ) {
-		const val = e.data.values;
-
-		switch( e.data.reply ) {
-			case "progress":
-				if ( val[ 1 ] ) {
-					progress( val[ 0 ] / val[ 1 ] );
-				}
-				break;
-			case "done":
-				for ( const fileName in val ) {
-					newBlob = val[ fileName ].blob;
-				}
-				GSUdomSetAttr( elConvertBtn, "disabled" );
-				GSUdomRmAttr( elConvertBtn, "loading" );
-				elMain.classList.add( "ready" );
-				break;
-		}
-	}
-};
-
 function setFile( f ) {
-	if ( !f || !convertStarted ) {
+	if ( !f || !waOpus.$isConverting() ) {
 		file = f;
 		elMain.classList.toggle( "loaded", !!f );
 		elFileName.textContent = f?.name;
@@ -115,21 +93,16 @@ function setFile( f ) {
 }
 
 function convert() {
-	if ( file && !convertStarted ) {
-		convertStarted = true;
+	if ( !waOpus.$isConverting() ) {
 		GSUdomSetAttr( elConvertBtn, "loading" );
-
-		const rdr = new FileReader();
-
-		rdr.addEventListener( "loadend", () => {
-			worker.postMessage( {
-				command: "encode",
-				args: [ file.name, "encoded.opus" ],
-				outData: { "encoded.opus": { "MIME": "audio/ogg" } },
-				fileData: { [ file.name ]: new Uint8Array( rdr.result ) },
+		waOpus.$convert( file, file.name )
+			.then( ( [ blob, name ] ) => {
+				newBlob = blob;
+				newBlobName = name;
+				GSUdomSetAttr( elConvertBtn, "disabled" );
+				GSUdomRmAttr( elConvertBtn, "loading" );
+				elMain.classList.add( "ready" );
 			} );
-		} );
-		rdr.readAsArrayBuffer( file );
 	}
 }
 
@@ -139,10 +112,6 @@ function progress( p ) {
 
 function download() {
 	if ( newBlob ) {
-		const name = elFileName.textContent;
-		const lastDot = name.lastIndexOf( "." );
-		const newName = `${ lastDot < 0 ? name : name.substring( 0, lastDot ) }.opus`;
-
-		GSUdownloadBlob( newName, newBlob );
+		GSUdownloadBlob( newBlobName, newBlob );
 	}
 }
