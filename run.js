@@ -1,7 +1,6 @@
 "use strict";
 
 // problem with MP3...
-// disabled gsuiComButton can still be clicked...
 
 document.body.append(
 	GSUcreateDiv( { id: "main" },
