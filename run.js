@@ -39,7 +39,7 @@ GSUdomBody.append(
 			GSUcreateAExt( { href: "https://github.com/Rillke/opusenc.js" }, "github.com/Rillke/opusenc.js" ),
 		),
 		GSUcreateSpan( { id: "copyright" },
-			`© ${ ( new Date() ).getFullYear() } `,
+			`© ${ new Date().getFullYear() } `,
 			GSUcreateA( { href: "https://gridsound.com" }, "gridsound.com" ),
 			" all rights reserved",
 		),
@@ -56,30 +56,20 @@ const elFileCancel = GSUdomQS( "#fileCancel" );
 const elConvertBtn = GSUdomQS( "#convertBtn" );
 const elDownloadBtn = GSUdomQS( "#downloadBtn" );
 const elProgress = GSUdomQS( "#progressIn" );
-
 let file;
 let newBlob;
 let newBlobName;
 const waOpus = new gswaOpusConverter( "worker/EmsWorkerProxy.js" );
 
-waOpus.$onprogress = p => progress( p );
-elBtnArea.onclick = () => elInputFile.click();
-elInputFile.onchange = () => setFile( elInputFile.files[ 0 ] );
-elConvertBtn.onclick = () => convert();
-elDownloadBtn.onclick = () => download();
-elFileCancel.onclick = () => {
-	setFile();
-	progress( 0 );
-	elMain.classList.remove( "loaded", "ready" );
-	GSUdomRmAttr( elConvertBtn, "disabled", "loading" );
-};
+function progress( p ) {
+	elProgress.style.width = `${ p * 100 }%`;
+}
 
-GSUdomBody.ondragover = GSUnoopFalse;
-GSUdomBody.ondragstart = GSUnoopFalse;
-GSUdomBody.ondrop = e => {
-	GSUgetFilesDataTransfert( e.dataTransfer.items ).then( f => setFile( f[ 0 ] ) );
-	return false;
-};
+function download() {
+	if ( newBlob ) {
+		GSUdownloadBlob( newBlobName, newBlob );
+	}
+}
 
 function setFile( f ) {
 	if ( !f || !waOpus.$isConverting() ) {
@@ -105,12 +95,21 @@ function convert() {
 	}
 }
 
-function progress( p ) {
-	elProgress.style.width = `${ p * 100 }%`;
-}
+waOpus.$onprogress = p => progress( p );
+elBtnArea.onclick = () => elInputFile.click();
+elInputFile.onchange = () => setFile( elInputFile.files[ 0 ] );
+elConvertBtn.onclick = () => convert();
+elDownloadBtn.onclick = () => download();
+elFileCancel.onclick = () => {
+	setFile();
+	progress( 0 );
+	elMain.classList.remove( "loaded", "ready" );
+	GSUdomRmAttr( elConvertBtn, "disabled", "loading" );
+};
 
-function download() {
-	if ( newBlob ) {
-		GSUdownloadBlob( newBlobName, newBlob );
-	}
-}
+GSUdomBody.ondragover = GSUnoopFalse;
+GSUdomBody.ondragstart = GSUnoopFalse;
+GSUdomBody.ondrop = e => {
+	GSUgetFilesDataTransfert( e.dataTransfer.items ).then( f => setFile( f[ 0 ] ) );
+	return false;
+};
