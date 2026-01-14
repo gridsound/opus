@@ -2,7 +2,7 @@
 
 // problem with MP3...
 
-document.body.append(
+GSUdomBody.append(
 	GSUcreateDiv( { id: "main" },
 		GSUcreateDiv( { id: "head" },
 			GSUcreateDiv( { id: "title", class: "gsui-ellipsis" },
@@ -74,9 +74,9 @@ elFileCancel.onclick = () => {
 	GSUdomRmAttr( elConvertBtn, "disabled", "loading" );
 };
 
-document.body.ondragover = GSUnoopFalse;
-document.body.ondragstart = GSUnoopFalse;
-document.body.ondrop = e => {
+GSUdomBody.ondragover = GSUnoopFalse;
+GSUdomBody.ondragstart = GSUnoopFalse;
+GSUdomBody.ondrop = e => {
 	GSUgetFilesDataTransfert( e.dataTransfer.items ).then( f => setFile( f[ 0 ] ) );
 	return false;
 };
