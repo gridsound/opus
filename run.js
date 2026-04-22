@@ -2,7 +2,7 @@
 
 // problem with MP3...
 
-GSUdomBody.append(
+$body.$append(
 	GSUcreateDiv( { id: "main" },
 		GSUcreateDiv( { id: "head" },
 			GSUcreateDiv( { id: "title", class: "gsui-ellipsis" },
@@ -46,23 +46,23 @@ GSUdomBody.append(
 	),
 );
 
-const elMain = GSUdomQS( "#main" );
-const elBtnArea = GSUdomQS( "#droparea" );
-const elInputFile = GSUdomQS( "#inputfile" );
-const elFileName = GSUdomQS( ".fileLine:nth-child(1) span:last-child" );
-const elFileType = GSUdomQS( ".fileLine:nth-child(2) span:last-child" );
-const elFileSize = GSUdomQS( ".fileLine:nth-child(3) span:last-child" );
-const elFileCancel = GSUdomQS( "#fileCancel" );
-const elConvertBtn = GSUdomQS( "#convertBtn" );
-const elDownloadBtn = GSUdomQS( "#downloadBtn" );
-const elProgress = GSUdomQS( "#progressIn" );
+const elMain = $( "#main" );
+const elBtnArea = $( "#droparea" );
+const elInputFile = $( "#inputfile" );
+const elFileName = $( ".fileLine:nth-child(1) span:last-child" );
+const elFileType = $( ".fileLine:nth-child(2) span:last-child" );
+const elFileSize = $( ".fileLine:nth-child(3) span:last-child" );
+const elFileCancel = $( "#fileCancel" );
+const elConvertBtn = $( "#convertBtn" );
+const elDownloadBtn = $( "#downloadBtn" );
+const elProgress = $( "#progressIn" );
 let file;
 let newBlob;
 let newBlobName;
 const waOpus = new gswaOpusConverter( "worker/EmsWorkerProxy.js" );
 
 function progress( p ) {
-	elProgress.style.width = `${ p * 100 }%`;
+	elProgress.$width( p * 100, "%" );
 }
 
 function download() {
@@ -74,42 +74,43 @@ function download() {
 function setFile( f ) {
 	if ( !f || !waOpus.$isConverting() ) {
 		file = f;
-		elMain.classList.toggle( "loaded", !!f );
-		elFileName.textContent = f?.name;
-		elFileType.textContent = f?.type;
-		elFileSize.textContent = f?.size;
+		elMain.$togClass( "loaded", !!f );
+		elFileName.$text( f?.name );
+		elFileType.$text( f?.type );
+		elFileSize.$text( f?.size );
 	}
 }
 
 function convert() {
 	if ( !waOpus.$isConverting() ) {
-		GSUdomSetAttr( elConvertBtn, "loading" );
+		elConvertBtn.$addAttr( "loading" );
 		waOpus.$convert( file, file.name )
 			.then( ( [ blob, name ] ) => {
 				newBlob = blob;
 				newBlobName = name;
-				GSUdomSetAttr( elConvertBtn, "disabled" );
-				GSUdomRmAttr( elConvertBtn, "loading" );
-				elMain.classList.add( "ready" );
+				elConvertBtn.$addAttr( "disabled" ).$rmAttr( "loading" );
+				elMain.$addClass( "ready" );
 			} );
 	}
 }
 
 waOpus.$onprogress = p => progress( p );
-elBtnArea.onclick = () => elInputFile.click();
-elInputFile.onchange = () => setFile( elInputFile.files[ 0 ] );
-elConvertBtn.onclick = () => convert();
-elDownloadBtn.onclick = () => download();
-elFileCancel.onclick = () => {
+elBtnArea.$onclick( () => elInputFile.$click() );
+elInputFile.$onchange( () => setFile( elInputFile.$get( 0 ).files[ 0 ] ) );
+elConvertBtn.$onclick( convert );
+elDownloadBtn.$onclick( download );
+elFileCancel.$onclick( () => {
 	setFile();
 	progress( 0 );
-	elMain.classList.remove( "loaded", "ready" );
-	GSUdomRmAttr( elConvertBtn, "disabled", "loading" );
-};
+	elMain.$rmClass( "loaded", "ready" );
+	elConvertBtn.$rmAttr( "disabled", "loading" );
+} );
 
-GSUdomBody.ondragover = GSUnoopFalse;
-GSUdomBody.ondragstart = GSUnoopFalse;
-GSUdomBody.ondrop = e => {
-	GSUgetFilesDataTransfert( e.dataTransfer.items ).then( f => setFile( f[ 0 ] ) );
-	return false;
-};
+$body.$on( {
+	dragover: GSUnoopFalse,
+	dragstart: GSUnoopFalse,
+	drop( e ) {
+		GSUgetFilesDataTransfert( e.dataTransfer.items ).then( f => setFile( f[ 0 ] ) );
+		return false;
+	},
+} );
